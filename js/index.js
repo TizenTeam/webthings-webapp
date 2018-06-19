@@ -83,6 +83,25 @@ app.get = function(endpoint, callback)
   request.send();
 };
 
+app.put = function(endpoint, payload, callback)
+{
+  var url = window.form.url.value + endpoint;
+  var token = localStorage['token'];
+  payload = JSON.stringify(payload);
+  this.log(url);
+  this.log(payload);
+  var request = new XMLHttpRequest();
+  request.addEventListener('load', function() {
+    callback = callback || {};
+    callback(null, this.responseText);
+  });
+    request.open('PUT', url);
+  request.setRequestHeader('Content-Type', 'application/json');
+  request.setRequestHeader('Accept', 'application/json');
+  request.setRequestHeader('Authorization', 'Bearer ' + token);
+  request.send(payload);
+}
+
 app.updateView = function(model, view)
 {
   var self = this;
@@ -91,10 +110,8 @@ app.updateView = function(model, view)
     this.get(endpoint, function(err, data) {
       view.local.widget.checked = !!(JSON.parse(data).on);
     });
-  } else if (model.type == "multilevelSensor") {
-    this.get(model.properties.level.href, function(err, data) {
-      view.local.button.innerText = JSON.parse(data).level;
-    });
+  } else {
+    console.log("TODO: implement " + model.type);
   }
 };
 
@@ -131,6 +148,7 @@ app.createBinarySensorView = function(li, model)
 
 app.createOnOffSwitchView = function(li, model)
 {
+  var self = this;
   li.setAttribute('class', 'ui-li-static ui-li-1line-btn1');
   var div = document.createElement('div');
   div.setAttribute('class', 'ui-btn.ui-btn-box-s ui-toggle-container');
@@ -144,6 +162,21 @@ app.createOnOffSwitchView = function(li, model)
   widget.setAttribute('aria-disabled', "false");
   widget.setAttribute('data-tau-bound', "ToggleSwitch");
   var endpoint = model.properties.on.href;
+  widget.local = {};
+  widget.addEventListener('click', function(){
+    widget.disabled  = true;
+    var wanted = (this.checked);
+    widget.local.interval = setTimeout(function(){
+      widget.disabled = false;
+    }, 1000);
+ 
+    self.log('wanted: ' + wanted);
+    self.put(endpoint, { on: wanted }, function(res, data) {
+      self.checked  = !! (JSON.parse(data).on)
+      clearInterval(widget.local.interval);
+      widget.disabled = false;
+    });
+  });
   div.appendChild(widget);
   var handlerdiv = document.createElement('div');
   handlerdiv.setAttribute('class', 'ui-switch-handler');
