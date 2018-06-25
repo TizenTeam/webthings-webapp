@@ -13,7 +13,9 @@
 <meta name="description" content="WebThings" />
 <title>WebThings</title>
 <link rel="stylesheet" type="text/css" href="css/style.css" />
-<script src="js/index.js"></script>
+<!-- TODO add manifest here -->
+<!--<link rel="manifest" href="/manifest.json">  -->
+
 </head>
 
 <body>
@@ -21,7 +23,8 @@
 <div class="contents">
 <h1>WebThings</h1>
 <form name="form">
-<input type="button" onclick="main()" value="Run" />
+<!--<input type="button" onclick="main()" value="Run" /> -->
+<input type="button" id="run" value="Run" />
 <input type="button" id="clear" value="Clear" />
 <input type="button" id="forget" value="Forget" />
 <p/>
@@ -34,12 +37,17 @@ Endpoint: ( ie: /things/0/properties/on )<br/>
 <p/>
 
 Console:<br />
+
+<div class="textarea">
 <textarea rows="8" cols="40" name=console>
 </textarea>
+</div>
 
 <p />
 </form>
 </div>
 </div>
+<script src="js/index.js"></script>
 </body>
 </html>
+

@@ -7,38 +7,80 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.*
  */
 
-function log(arg)
-{
+(function() {
+  'use strict';
+
+  var app = {
+    isLoading: true,
+    datacontent: document.querySelector('.textarea')
+  };
+
+/*****************************************************************************
+   *
+   * Event listeners for UI elements
+   *
+   ****************************************************************************/
+  document.getElementById('run').addEventListener('click', function() {
+    app.main();
+  });
+
+   document.getElementById('clear').addEventListener('click', function() {
+    document.form.console.value = '';
+  });
+
+  document.getElementById('forget').addEventListener('click', function() {
+    document.form.console.value = '';
+    localStorage.clear();
+    console.log('token forgotten (need auth again)');
+  });
+
+  /*document.getElementById('tizenhwkey').addEventListener('click', function(e) {
+    if (e.keyName === "back") {
+      try {
+        tizen.application.getCurrentApplication().exit();
+      } catch (ignore) {}
+    }
+  }); */
+  5
+/*****************************************************************************
+ *
+ * Methods for dealing with the model
+ *})();
+****************************************************************************/
+
+/*app.log = function (arg) {
   if (arg && arg.name && arg.message) {
     var err = arg;
-    log("exception [" + err.name + "] msg[" + err.message + "]");
+    console.log("exception [" + err.name + "] msg[" + err.message + "]");
   }
   var text = "log: " + arg + "\n";
-  console.log(text);
+  //app.log(text);
   document.form.console.value += text;
-  document.form.console.value.scrollTop = document.form.console.value.scrollHeight;
-}
+//  document.form.console.value.scrollTop = document.form.console.value.scrollHeight;
+}; */
 
-function handleDocument(document)
-{
+app.handleDocument = function(document) {
   var parser = new DOMParser();
   var xpath = '/html/body/section/div[2]/code/text()';
   var iterator = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null );
   var thisNode = iterator.iterateNext();
-  log("token: " + thisNode.textContent); //TODO
+  console.log("token: " + thisNode.textContent); //TODO
   localStorage['token'] = thisNode.textContent;
-}
+};
 
-function browse(base_url, callback)
-{
+app.browse = function browse(base_url, callback) {
   const delay = 50;
   var url = base_url;
   url += '/oauth/authorize' + '?';
   url += '&client_id=' + 'local-token';
   url += '&scope=' + '/things:readwrite';
-  url += '&state=asdf';
+  url += '&st})();ate=asdf';/*****************************************************************************
+  *
+  * Event listeners for UI elements
+  *
+  ****************************************************************************/
   url += '&response_type=code';
-  log("browse: " + url); //TODO
+  console.log("browse: " + url); //TODO
   window.authCount = 0;
   // TODO: check if host alive using xhr
   window.authWin = window.open(url);
@@ -46,7 +88,7 @@ function browse(base_url, callback)
     url = (window.authWin && window.authWin.location
            && window.authWin.location.href )
       ? window.authWin.location.href : undefined;
-    log("wait: " + url); //TODO
+    console.log("wait: " + url); //TODO
     if (url && (url.indexOf('code=') >=0)) {
       handleDocument(window.authWin.document);
       window.authCount = 99;
@@ -61,85 +103,111 @@ function browse(base_url, callback)
       if (callback) callback();
     }
   }, delay);
-}
+};
 
-function get(endpoint, callback)
-{
-  var request = new XMLHttpRequest();
+app.get = function(endpoint, callback) {
   var url = window.form.url.value + endpoint;
+  console.log(url); 
+  
+  /*
+  * Check if the service worker has already cached the sensor
+  * data. If the service worker has the data, then display the cached
+  * data while the app fetches the latest data.  
+  * *//*****************************************************************************
+   *
+   * Event listeners for UI elements
+   *
+   ****************************************************************************/
+  if ('caches' in window) {
+  caches.match(url).then(function(response) {
+        if (response) {
+          response.json().then(function updateFromCache(json) {
+            var results = json.query.results;
+            results.key = key;
+            results.label = label;
+            results.created = json.query.created;
+            app.updateForecastCard(results);
+          });
+        }
+      });
+   }
+
   var token = localStorage['token'];
+  var request = new XMLHttpRequest();
   request.addEventListener('load', function() {
     callback = callback || {};
     callback(null, this.responseText);
-  });
-  log(url); //TODO
+  }); 
   request.open('GET', url);
   request.setRequestHeader('Accept', 'application/json');
   request.setRequestHeader('Authorization', 'Bearer ' + token);
   request.send();
-}
+};
 
-function request()
-{
-  var base_url = window.form.url.value;
-  if (! localStorage['token']) {
-    return browse(base_url, query);
-  }
-  query();
-}
-
-function query(url)
-{
+app.query = function query(url) {
   url = (url) || window.form.url.value + window.form.endpoint.value;
-  log("query: " + url);
-  get("/things", function(err, data) {
+ console.log("query: " + url);
+  app.get("/things", function(err, data) {
+    // Need to check if the app know if it's displaying the latest data
+    //var datacontentElem = document.querySelector(".textarea");
+    
+    //var dataLastUpdated = datacontentElem.textContent;
+ /*   var dataLastUpdated = app.datacontent.textContent;
+    if (dataLastUpdated)  {
+      dataLastUpdated = new Date(dataLastUpdated);
+      // Bail if the textarea has more recent data then the data
+      if (dataLastUpdated.getTime() < dataLastUpdated.getTime()) {
+        return;
+      }
+    } */
+
     var items = data && JSON.parse(data) || [];
-    for (index=0; index < items.length; index++) {
+    for (var index=0; index < items.length; index++) {
       var model = items[index];
-      log(JSON.stringify(model));
+     console.log(JSON.stringify(model));
     };
   });
-}
+};
 
-function request()
-{
+app.request = function request() {
   var base_url = window.form.url.value;
   if (! localStorage['token']) {
-    return browse(base_url, query);
+    return app.browse(base_url, app.query);
   }
-  query();
-}
+  app.query();
+};
 
-function main()
-{
+app.main = function main() {
   if (localStorage['url'] ) window.form.url.value = localStorage['url']
   try {
-    request();
-    query();
+    app.request();
+    app.query();
   } catch(err) {
-    log(err);
+    console.log(err);
   }
-}
-
-window.onload = function() {
-
-  var clearButton = document.getElementById('clear');
-  clearButton.addEventListener('click', function() {
-    document.form.console.value = '';
-  });
-
-  var forgetButton = document.getElementById('forget');
-  forgetButton.addEventListener('click', function() {
-    document.form.console.value = '';
-    localStorage.clear();
-    log('token forgotten (need auth again)');
-  });
-  // add eventListener for tizenhwkey
-  document.addEventListener('tizenhwkey', function(e) {
-    if (e.keyName === "back") {
-      try {
-        tizen.application.getCurrentApplication().exit();
-      } catch (ignore) {}
-    }
-  });
 };
+
+/************************************************************************
+   *
+   * Code required to start the app
+   *
+   * NOTE: To simplify this codelab, we've used localStorage.
+   *   localStorage is a synchronous API and has serious performance
+   *   implications. It should not be used in production applications!
+   *   Instead, check out IDB (https://www.npmjs.com/package/idb) or
+   *   SimpleDB (https://gist.github.com/inexorabletash/c8069c042b734519680c)
+   ************************************************************************/
+
+  // TODO add service worker code here
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+      // Registration was successful
+      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    }, function(err) {
+      // registration failed :(
+      console.log('ServiceWorker registration failed: ', err);
+    });
+  });
+}
+})();
