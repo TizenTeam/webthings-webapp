@@ -7,11 +7,42 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.*
  */
 
-var app = {};
+(function() {
+ // 'use strict';
 
+  var app = {
+    isLoading: true,
+    datacontent: document.querySelector('.textarea')
+  };
 
-//TODO enable this if you want to use brower log only for debuging
-//app.log = console.log;
+/*****************************************************************************
+   *
+   * Event listeners for UI elements
+   *
+   ****************************************************************************/
+  document.getElementById('run').addEventListener('click', function() {
+    app.main();
+  });
+
+  document.getElementById('forget').addEventListener('click', function() {
+    document.form.console.value = '';
+    localStorage.clear();
+    console.log('token forgotten (need auth again)');
+  });
+
+  /*document.getElementById('tizenhwkey').addEventListener('click', function(e) {
+    if (e.keyName === "back") {
+      try {
+        tizen.application.getCurrentApplication().exit();
+      } catch (ignore) {}
+    }
+  }); */
+  5
+/*****************************************************************************
+ *
+ * Methods for dealing with the model
+ *})();
+****************************************************************************/
 
 app.log = function(arg)
 {
@@ -23,8 +54,7 @@ app.log = function(arg)
   console.log(text);
 };
 
-app.handleDocument = function(document)
-{
+app.handleDocument = function(document) {
   var parser = new DOMParser();
   var xpath = '/html/body/section/div[2]/code/text()';
   var iterator = document.evaluate(xpath, document, null, XPathResult.ANY_TYPE, null );
@@ -33,26 +63,25 @@ app.handleDocument = function(document)
   localStorage['token'] = thisNode.textContent;
 };
 
-app.browse = function(base_url, callback)
-{
-  var self = this;
+app.browse = function browse(base_url, callback) {
   const delay = 50;
   var url = base_url;
   url += '/oauth/authorize' + '?';
   url += '&client_id=' + 'local-token';
   url += '&scope=' + '/things:readwrite';
+  url += '&st})();ate=asdf';   // ziran -necessary?
   url += '&response_type=code';
   this.log("browse: " + url); //TODO
   window.authCount = 0;
   // TODO: check if host alive using xhr
   window.authWin = window.open(url);
-  window.interval = setInterval(function () {
+  window.interval = self.setInterval(function () {
     url = (window.authWin && window.authWin.location
            && window.authWin.location.href )
       ? window.authWin.location.href : undefined;
-    self.log("wait: " + url); //TODO
+    app.log("wait: " + url); //TODO
     if (url && (url.indexOf('code=') >=0)) {
-      self.handleDocument(window.authWin.document);
+      app.handleDocument(window.authWin.document);
       window.authCount = 99;
     } else {
       window.authCount++;
@@ -67,16 +96,38 @@ app.browse = function(base_url, callback)
   }, delay);
 };
 
-app.get = function(endpoint, callback)
-{
+app.get = function(endpoint, callback) {
   var url = window.form.url.value + endpoint;
+  this.log(url); 
+  
+  /*
+  * Check if the service worker has already cached the sensor
+  * data. If the service worker has the data, then display the cached
+  * data while the app fetches the latest data.  
+  * 
+  */
+
+  /* if ('caches' in window) {
+  caches.match(url).then(function(response) {
+        if (response) {
+          response.json().then(function updateFromCache(json) {
+            var results = json.query.results;
+            results.key = key;
+            results.label = label;
+            results.created = json.query.created;
+            app.updateForecastCard(results);
+          });
+        }
+      });
+   } */
+
   var token = localStorage['token'];
   var request = new XMLHttpRequest();
   request.addEventListener('load', function() {
     callback = callback || {};
     callback(null, this.responseText);
-  });
-  this.log(url); //TODO
+  }); 
+ this.log(url); //TODO
   request.open('GET', url);
   request.setRequestHeader('Accept', 'application/json');
   request.setRequestHeader('Authorization', 'Bearer ' + token);
@@ -259,12 +310,30 @@ app.createView = function(model)
   return li;
 };
 
-app.query = function(url)
-{
+app.query = function query(url) {
   var self = this;
   url = (url) || window.form.url.value;
   this.log("query: " + url);
-  this.get("/things", function(err, data) {
+  app.get("/things", function(err, data) {
+    // Need to check if the app know if it's displaying the latest data
+    /* var datacontentElem = document.querySelector(".textarea");
+    
+    //var dataLastUpdated = datacontentElem.textContent;
+   var dataLastUpdated = app.datacontent.textContent;
+    if (dataLastUpdated)  {
+      dataLastUpdated = new Date(dataLastUpdated);
+      // Bail if the textarea has more recent data then the data
+      if (dataLastUpdated.getTime() < dataLastUpdated.getTime()) {
+        return;
+      }
+    } */
+
+    /*var items = data && JSON.parse(data) || [];
+    for (var index=0; index < items.length; index++) {
+      var model = items[index];
+      app.log(JSON.stringify(model));
+    }; */
+
     var list = document.getElementById('items');
     list.innerHTML = "";  // Clean list
     var items = data && JSON.parse(data) || [];
@@ -276,7 +345,7 @@ app.query = function(url)
       list.appendChild(view);
       listWidget = tau.widget.Listview(list);
       listWidget.refresh();
-    };
+     };
   });
 };
 
@@ -292,40 +361,37 @@ app.request = function()
   this.query();
 };
 
-app.main = function()
-{
+app.main = function main() {
   if (localStorage['url'] ) window.form.url.value = localStorage['url']
   try {
-    this.request();
-    this.query();
+    app.request();
+    app.query();
   } catch(err) {
     this.log(err);
   }
 };
 
-window.onload = function() {
+/************************************************************************
+   *
+   * Code required to start the app
+   *
+   * NOTE: To simplify this codelab, we've used localStorage.
+   *   localStorage is a synchronous API and has serious performance
+   *   implications. It should not be used in production applications!
+   *   Instead, check out IDB (https://www.npmjs.com/package/idb) or
+   *   SimpleDB (https://gist.github.com/inexorabletash/c8069c042b734519680c)
+   ************************************************************************/
 
-  var runButton = document.getElementById('run');
-  runButton.addEventListener('click', function() {
-    app.main();
+  // TODO add service worker code here
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('service-worker.js').then(function(registration) {
+      // Registration was successful
+      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    }, function(err) {
+      // registration failed :(
+      console.log('ServiceWorker registration failed: ', err);
+    });
   });
-
-  var forgetButton = document.getElementById('forget');
-  forgetButton.addEventListener('click', function() {
-    localStorage.clear();
-    app.log('token forgotten (need auth again)');
-  });
-
-  var urlInput = document.getElementById('url');
-  urlInput.addEventListener('change', function() {
-    this.value = this.value.replace(/\/$/, "");
-  });
-  // add eventListener for tizenhwkey
-  document.addEventListener('tizenhwkey', function(e) {
-    if (e.keyName === "back") {
-      try {
-        tizen.application.getCurrentApplication().exit();
-      } catch (ignore) {}
-    }
-  });
-};
+}
+})();
