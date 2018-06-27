@@ -53,7 +53,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.5812608"
-     inkscape:cx="123.47077"
+     inkscape:cx="235.09056"
      inkscape:cy="258.18595"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
@@ -68,8 +68,7 @@
      fit-margin-left="0"
      fit-margin-right="0"
      fit-margin-bottom="0"
-     units="px"
-     inkscape:pagecheckerboard="true" />
+     units="px" />
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -162,7 +161,8 @@
      inkscape:label="Layer 2"
      transform="translate(240.32825,-24.07764)">
     <g
-       aria-label="Web   Things"
+       aria-label="Web
+  Things"
        transform="matrix(0.61670426,-0.2651457,0.89169466,1.0570316,-150.86366,-82.664568)"
        style="font-style:normal;font-weight:normal;font-size:25.39999962px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332;filter:url(#filter1108)"
        id="text819">
