@@ -10,12 +10,12 @@
 <head>
 <meta name="theme-color" content="#317EFB"/>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
 <meta name="description" content="WebThings" />
 <title>WebThings</title>
-<link rel="stylesheet" type="text/css" href="lib/tau/mobile/theme/default/tau.min.css"/>
-<link rel="stylesheet" type="text/css" href="css/style.css" />
-<script type="text/javascript" src="lib/tau/mobile/js/tau.min.js" data-build-remove="false"></script>
+<link rel="stylesheet" type="text/css" href="css/style.css" media="print">
+<link rel="preload" href="lib/tau/mobile/js/tau.min.js" as="script">
+<link rel="manifest" href="/manifest.json">
 </head>
 
 <body>
@@ -52,11 +52,10 @@
 <a href="#" class="ui-btn" onclick="alert('https://github.com/rzr/webthings-webapp')">About</a>
 </div>
 
-<p />
-</form>
 </div>
 </div>
 <script src="js/index.js"></script>
+<script src="lib/tau/mobile/js/tau.min.js"></script>
 </body>
 </html>
 

@@ -64,7 +64,7 @@ app.handleDocument = function(document) {
 };
 
 app.browse = function browse(base_url, callback) {
-  const delay = 50;
+  var delay = 50;
   var url = base_url;
   url += '/oauth/authorize' + '?';
   url += '&client_id=' + 'local-token';

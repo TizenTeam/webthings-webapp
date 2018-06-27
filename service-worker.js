@@ -17,7 +17,8 @@ var cacheName = 'webthingsPWA-1';
 var filesToCache = [
   '/',
   '/index.html',
-  '/js/index.js'
+  '/js/index.js',
+  '/lib/tau/mobile/js/tau.min.js'
 ];
 
 self.addEventListener('install', function(e) {
