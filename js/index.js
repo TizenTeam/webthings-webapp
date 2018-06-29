@@ -47,6 +47,9 @@ app.browse = function(base_url, callback)
   var self = this;
   const delay = 50;
   var url = base_url;
+  if (!url || !url.length) {
+    throw "Please enter valid URL: (ex: http://gateway.local:8080)";
+  }
   url += '/oauth/authorize' + '?';
   url += '&client_id=' + 'local-token';
   url += '&scope=' + '/things:readwrite';
@@ -126,6 +129,9 @@ app.query = function(url)
 {
   var self = this;
   url = (url) || window.form.url.value + window.form.endpoint.value;
+  if (!url || !url.length) {
+    throw "Please enter valid URL: (ex: http://gateway.local:8080)";
+  }
   this.log("query: " + url);
   this.get("/things", function(err, data) {
     if (err || !data) throw err;
@@ -156,6 +162,7 @@ app.main = function()
     this.query();
   } catch(err) {
     this.log(err);
+    alert(err);
   }
 };
 
