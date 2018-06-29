@@ -10,10 +10,43 @@
 (function() {
  // 'use strict';
 
-var app = {
-  isLoading: true,
-  datacontent: document.querySelector('.textarea')
-};
+  var app = {
+    isLoading: true,
+    datacontent: document.querySelector('.textarea')
+  };
+
+/*****************************************************************************
+   *
+   * Event listeners for UI elements
+   *
+   ****************************************************************************/
+  document.getElementById('run').addEventListener('click', function() {
+    app.main();
+  });
+
+   document.getElementById('clear').addEventListener('click', function() {
+    document.form.console.value = '';
+  });
+
+  document.getElementById('forget').addEventListener('click', function() {
+    document.form.console.value = '';
+    localStorage.clear();
+    console.log('token forgotten (need auth again)');
+  });
+
+  /*document.getElementById('tizenhwkey').addEventListener('click', function(e) {
+    if (e.keyName === "back") {
+      try {
+        tizen.application.getCurrentApplication().exit();
+      } catch (ignore) {}
+    }
+  }); */
+  5
+/*****************************************************************************
+ *
+ * Methods for dealing with the model
+ *})();
+****************************************************************************/
 
 //TODO enable this if you want to use brower log only for debuging
 //app.log = console.log;
@@ -158,62 +191,6 @@ app.main = function()
   }
 };
 
-window.onload = function() {
-
-  var runButton = document.getElementById('run');
-  runButton.addEventListener('click', function() {
-    app.main();
-  });
-
-  var clearButton = document.getElementById('clear');
-  clearButton.addEventListener('click', function() {
-    document.form.console.value = '';
-  });
-
-  var resetButton = document.getElementById('reset');
-  resetButton.addEventListener('click', function() {
-    document.form.console.value = '';
-    document.form.url.value = '';
-    document.form.token.value = '';
-    localStorage.clear();
-    app.log('token forgotten (need auth again)');
-  });
-
-  var aboutButton = document.getElementById('about');
-  aboutButton.addEventListener('click', function() {
-    window.open('README.md');
-  });
-
-  var urlInput = document.getElementById('url');
-  if ( localStorage['url'] && localStorage['url'].length ) {
-    window.form.url.value = localStorage['url']
-  } else {
-    window.form.value="http://gateway.local:8080";
-  }
-  urlInput.addEventListener('change', function() {
-    this.value = this.value.replace(/\/$/, "");
-    localStorage['url'] = this.value;
-  });
-
-  var tokenInput = document.getElementById('token');
-  if ( localStorage['token'] && localStorage['token'].length ) {
-    window.form.token.value = localStorage['token']
-  }
-  tokenInput.addEventListener('change', function() {
-    this.value = this.value.replace(/\/$/, "");
-    localStorage['token'] = this.value;
-  });
-
-  // add eventListener for tizenhwkey
-  document.addEventListener('tizenhwkey', function(e) {
-    if (e.keyName === "back") {
-      try {
-        tizen.application.getCurrentApplication().exit();
-      } catch (ignore) {}
-    }
-  });
-
-  // PWA
   if ('serviceWorker' in navigator) {
     try {
       navigator.serviceWorker.register('service-worker.js').then(function(registration) {
@@ -225,9 +202,4 @@ window.onload = function() {
       console.log(e.message);
     }
   }
-
-};
-
-
 })();
-
