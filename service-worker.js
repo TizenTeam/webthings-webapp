@@ -38,6 +38,8 @@ self.addEventListener('activate', function(e) {
           
 return caches.delete(key);
         }
+        
+return null;
       }));
     }));
 
