@@ -65,7 +65,7 @@
         window.authCount = 98;
       }
     });
-    this.log(`Opening: ${url}`);
+    confirm(`Opening: ${url}`);
     window.authWin = window.open(url);
     if (!window.authWin) {
       throw `Can't open window: ${url}`;
