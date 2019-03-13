@@ -238,7 +238,7 @@
           localStorage.state = 'callback';
           if (confirm('Redirect to: ' + url)
               window.location = url;
-        }, 500);
+        }, 5000);
       } else if (code && isCallback) {
         localStorage.state = 'token';
         const request_url = `${localStorage.url}/oauth/token`;
