@@ -12,29 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-var cacheName = 'WebThings-0';
-var dataCacheName = 'WebThings-data-0';
+var cacheName = "WebThings-0";
+var dataCacheName = "WebThings-data-0";
 var filesToCache = [
-  '/',
-  '/index.html',
-  '/js/index.js'
+  "/",
+  "/index.html",
+  "/js/index.js"
 ];
 
-self.addEventListener('install', function(e) {
-  console.log('[ServiceWorker] Install');
+self.addEventListener("install", function(e) {
+  console.log("[ServiceWorker] Install");
   e.waitUntil(caches.open(cacheName).then(function(cache) {
-      console.log('[ServiceWorker] Caching app shell');
+      console.log("[ServiceWorker] Caching app shell");
       
 return cache.addAll(filesToCache);
     }));
 });
 
-self.addEventListener('activate', function(e) {
-  console.log('[ServiceWorker] Activate');
+self.addEventListener("activate", function(e) {
+  console.log("[ServiceWorker] Activate");
   e.waitUntil(caches.keys().then(function(keyList) {
       return Promise.all(keyList.map(function(key) {
         if (key !== cacheName && key !== dataCacheName) {
-          console.log('[ServiceWorker] Removing old cache', key);
+          console.log("[ServiceWorker] Removing old cache", key);
           
 return caches.delete(key);
         }
@@ -56,8 +56,8 @@ return null;
   return self.clients.claim();
 });
 
-self.addEventListener('fetch', function(e) {
-  console.log('[Service Worker] Fetch', e.request.url);
+self.addEventListener("fetch", function(e) {
+  console.log("[Service Worker] Fetch", e.request.url);
 
     /*
      * The app is asking for app shell files. In this scenario the app uses the
