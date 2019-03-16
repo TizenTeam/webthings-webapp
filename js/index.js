@@ -24,7 +24,7 @@
     let value;
     if (el) {
       value = el.value || '';
-      if (value.length > 1024 * 1024 ) {
+      if (value.length > 1024 * 1024) {
         value = '(...)\n';
       }
       value += text;
