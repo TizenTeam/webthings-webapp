@@ -9,7 +9,7 @@
 
 (function() {
   // 'use strict';
-  app.debug = !false;
+  app.debug = false;
   app.isLoading = true;
   app.datacontent = document.querySelector('.textarea');
   app.localStorage = localStorage;
@@ -346,10 +346,11 @@ ${authorize_endpoint}\
     });
 
     const clearButton = document.getElementById('clear');
-    clearButton.addEventListener('click', function() {
-      document.form.console.value = '';
-    });
-
+    if (clearButton)
+      clearButton.addEventListener('click', function() {
+        document.form.console.value = '';
+      });
+    
     const resetButton = document.getElementById('reset');
     resetButton.addEventListener('click', function() {
       document.form.console.value = '';
@@ -372,7 +373,7 @@ ${authorize_endpoint}\
 
     const urlInput = document.getElementById('url');
     if (localStorage.url && localStorage.url.length) {
-      window.form.url.value = localStorage.url;
+      urlInput.setAttribute('value',  localStorage.url);
     } else if (urlInput.value && urlInput.value.length) {
       localStorage.url = urlInput.value;
     } else {
@@ -385,7 +386,7 @@ ${authorize_endpoint}\
 
     const tokenInput = document.getElementById('token');
     if (localStorage.token && localStorage.token.length) {
-      window.form.token.value = localStorage.token;
+      tokenInput.setAttribute('value', localStorage.token);
     }
     tokenInput.addEventListener('change', function() {
       this.value = this.value.replace(/\/$/, '');
@@ -394,7 +395,7 @@ ${authorize_endpoint}\
 
     const endpointInput = document.getElementById('endpoint');
     if (localStorage.endpoint) {
-      window.form.endpoint.value = localStorage.endpoint;
+      endpoint.setAttribute('value',  localStorage.endpoint);
     } else if (window.form.endpoint.value) {
       localStorage.endpoint = window.form.endpoint.value;
     }
