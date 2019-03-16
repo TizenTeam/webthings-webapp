@@ -296,6 +296,7 @@ ${authorize_endpoint}\
     this.log(`main: endpoint: ${localStorage.endpoint}`);
     this.log(`main: ${localStorage.state}`);
     this.log(`main: ${window.location.hostname}`);
+    
     // TODO: OAuth update ids here, URLs using file:// will copy from default
     if (!localStorage.client_id || !localStorage.secret) {
       if (!window.location.hostname) {
@@ -319,6 +320,27 @@ ${authorize_endpoint}\
   };
 
   window.htmlOnLoad = function() {
+
+    // hack to pass token from CLI
+    var hash = window.location.hash;
+    if (hash) {
+      hash = hash.substring(1, hash.length);
+      var url = 'http://0.0.0.0/' + hash;
+      var params = new URL(url).searchParams;
+      for (let entry of params.entries()){
+        if (entry[0] && entry[1]) {
+          localStorage[entry[0]] = entry[1];
+        }
+      }
+      const loc = window.location.protocol
+            + '//'
+            + window.location.host
+            + window.location.pathname;
+      if (!app.debug || confirm('Relocate to ' + loc)) {
+        window.history.replaceState({}, document.title, loc);
+      }
+    }
+    
     const runButton = document.getElementById('run');
     runButton.addEventListener('click', function() {
       app.main();
@@ -340,7 +362,9 @@ ${authorize_endpoint}\
 
     const aboutButton = document.getElementById('about');
     aboutButton.addEventListener('click', function() {
-      window.open('README.md');
+      console.log(this);
+      this.setAttribute('value', 'changed');
+      //window.open('README.md');
     });
 
     const browseButton = document.getElementById('browse');
@@ -351,11 +375,11 @@ ${authorize_endpoint}\
 
     const urlInput = document.getElementById('url');
     if (localStorage.url && localStorage.url.length) {
-      window.form.url.value = localStorage.url;
+      urlInput.setAttribute('value', localStorage.url);
     } else if (urlInput.value && urlInput.value.length) {
-      localStorage.url = urlInput.value;
+      localStorage.url = urlInput.getAttribute('value');
     } else {
-      window.form.value = 'http://gateway.local:8080';
+      urlInput.setAttribute('value' ,'http://gateway.local:8080');
     }
     urlInput.addEventListener('change', function() {
       this.value = this.value.replace(/\/$/, '');
