@@ -224,7 +224,7 @@
         // const searchParams = new URLSearchParams(url.search);
         const searchParams = url.searchParams;
         code = searchParams.get('code');
-        this.log(`code: ${code}`);
+        this.log(`code: should not be null: ${code}`);
         this.log(`TODO: searchParms: ${searchParams}`); // %3Fcode..
       } catch (err) {
         this.log(`TODO: err: ${err}`);
