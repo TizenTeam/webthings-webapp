@@ -9,7 +9,7 @@
 
 (function() {
   // 'use strict';
-  app.debug = !false;
+  app.debug = false;
   app.isLoading = true;
   app.localStorage = localStorage;
   app.log = function(arg) {
