@@ -297,6 +297,17 @@ ${authorize_endpoint}\
     this.log(`main: endpoint: ${localStorage.endpoint}`);
     this.log(`main: ${localStorage.state}`);
     this.log(`main: ${window.location.hostname}`);
+
+    let searchParams = null;
+    if (document.location.search) {
+      searchParams = (new URL(document.location)).searchParams;
+    }
+    if (searchParams) {
+      for (const entry of searchParams.entries()) {
+        app[entry[0]] = entry[1];
+      }
+    }
+
     // TODO: OAuth update ids here, URLs using file:// will copy from default
     if (!localStorage.client_id || !localStorage.secret) {
       if (!window.location.hostname) {
