@@ -12,8 +12,8 @@
   app.isLoading = true;
   app.localStorage = localStorage;
   add.devel = function() {
-    return (localStorage['devel'] || false);
-  }
+    return (localStorage.devel || false);
+  };
   app.log = function(arg) {
     if (arg && arg.name && arg.message) {
       const err = arg;
@@ -313,8 +313,6 @@ ${authorize_endpoint}\
   };
 
   window.htmlOnLoad = function() {
-
-
     const develCheckbox = document.getElementById('devel');
     if (localStorage.devel) {
       develCheckbox.checked = localStorage.devel;
@@ -322,8 +320,8 @@ ${authorize_endpoint}\
       localStorage.endpoint = develCheckbox.checked;
     }
 
-    localStorage['devel'] = develCheckbox.checked;
-    
+    localStorage.devel = develCheckbox.checked;
+
     // hack to pass token from CLI
     let hash = window.location.hash;
     if (hash) {
