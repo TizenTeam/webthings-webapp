@@ -11,7 +11,7 @@
   // 'use strict';
   app.isLoading = true;
   app.localStorage = localStorage;
-  add.devel = function() {
+  app.devel = function() {
     return (localStorage.devel || false);
   };
   app.log = function(arg) {
