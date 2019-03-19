@@ -12,9 +12,13 @@
   app.isLoading = true;
   app.localStorage = localStorage;
   app.devel = function() {
-    return (localStorage.devel || false);
+    return Boolean(localStorage.devel || false);
   };
   app.log = function(arg) {
+    if (!this.devel()) {
+      return;
+    }
+
     if (arg && arg.name && arg.message) {
       const err = arg;
       this.log(`exception [${err.name}] msg[${err.message}]`);
