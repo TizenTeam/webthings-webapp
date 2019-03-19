@@ -9,9 +9,11 @@
 
 (function() {
   // 'use strict';
-  app.debug = false;
   app.isLoading = true;
   app.localStorage = localStorage;
+  add.devel = function() {
+    return (localStorage['devel'] || false);
+  }
   app.log = function(arg) {
     if (arg && arg.name && arg.message) {
       const err = arg;
@@ -79,7 +81,7 @@
         window.authCount = 98;
       }
     });
-    if (app.debug && !confirm(`Opening: ${url}`)) {
+    if (app.devel() && !confirm(`Opening: ${url}`)) {
       return;
     }
     window.authWin = window.open(url);
@@ -241,7 +243,7 @@ ${authorize_endpoint}\
 &redirect_uri=${encodeURIComponent(document.location)}\
 `;
           localStorage.state = 'callback';
-          if (app.debug && !confirm(`Redirect to: ${redirect_url}`)) {
+          if (app.devel() && !confirm(`Redirect to: ${redirect_url}`)) {
             return;
           }
           window.location = redirect_url;
@@ -311,6 +313,17 @@ ${authorize_endpoint}\
   };
 
   window.htmlOnLoad = function() {
+
+
+    const develCheckbox = document.getElementById('devel');
+    if (localStorage.devel) {
+      develCheckbox.checked = localStorage.devel;
+    } else if (develCheckbox.checked) {
+      localStorage.endpoint = develCheckbox.checked;
+    }
+
+    localStorage['devel'] = develCheckbox.checked;
+    
     // hack to pass token from CLI
     let hash = window.location.hash;
     if (hash) {
@@ -330,7 +343,7 @@ ${authorize_endpoint}\
 //\
 ${window.location.host}\
 ${window.location.pathname}`;
-      if (!app.debug || confirm(`Relocate to ${loc}`)) {
+      if (!app.devel() || confirm(`Relocate to ${loc}`)) {
         window.history.replaceState({}, document.title, loc);
       }
     }
@@ -365,7 +378,7 @@ ${window.location.pathname}`;
     const browseButton = document.getElementById('browse');
     browseButton.addEventListener('click', function() {
       window.location.href =
-        (app.debug) ? '00index.html' : 'aframe-ui-widgets.html';
+        (app.devel()) ? '00index.html' : 'aframe-ui-widgets.html';
     });
 
     const urlInput = document.getElementById('url');
