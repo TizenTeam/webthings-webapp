@@ -313,14 +313,18 @@ ${authorize_endpoint}\
   };
 
   window.htmlOnLoad = function() {
+    // Devel mode
     const develCheckbox = document.getElementById('devel');
-    if (localStorage.devel) {
-      develCheckbox.checked = localStorage.devel;
-    } else if (develCheckbox.checked) {
-      localStorage.endpoint = develCheckbox.checked;
+    if (develCheckbox) {
+      if (localStorage.devel) {
+        develCheckbox.checked = localStorage.devel;
+      } else if (develCheckbox.checked) {
+        localStorage.devel = develCheckbox.checked;
+      }
+      develCheckbox.addEventListener('change', function() {
+        localStorage.devel = this.checked;
+      });
     }
-
-    localStorage.devel = develCheckbox.checked;
 
     // hack to pass token from CLI
     let hash = window.location.hash;
